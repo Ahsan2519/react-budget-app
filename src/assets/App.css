@@ -10,5 +10,14 @@
 .common-btn{
     @apply border-2 py-[2px] px-[2%] mt-4 rounded-[4px] cursor-pointer lg:hover:text-white transition-all duration-[.3s] font-[600]
 }
+
+.common-before{
+    @apply  before:top-[-62%] before:translate-y-[-50%] before:left-[50%] before:translate-x-[-50%] before:text-[35px] mt-[40px]  text-center block
+}
+
+.icon{
+    @apply before:absolute relative before:font-['FontAwesome'] 
+}
+
 @tailwind components;
 @tailwind utilities;
