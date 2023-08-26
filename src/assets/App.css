@@ -1,3 +1,14 @@
 @tailwind base;
+.common-input{
+    @apply outline-none border-2 rounded-[4px] px-2 py-[2px]
+}
+
+.common-text {
+    @apply font-bold text-[20px]
+}
+
+.common-btn{
+    @apply border-2 py-[2px] px-[2%] mt-4 rounded-[4px] cursor-pointer lg:hover:text-white transition-all duration-[.3s] font-[600]
+}
 @tailwind components;
 @tailwind utilities;
