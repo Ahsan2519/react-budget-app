@@ -42,7 +42,7 @@ const Budget = () => {
           return setIsError(false);
         })();
   };
-  console.log(amountVal <= 0 , amountVal)
+  console.log(amountVal <= 0, amountVal);
 
   const expenseEvent = () => {
     !expense.trim()
