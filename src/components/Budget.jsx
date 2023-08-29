@@ -1,6 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import ExpenseList from "./ExpenseList";
 
 const Budget = () => {
   const [budgetAmount, setBudgetAmount] = useState(""),
@@ -109,20 +110,6 @@ const Budget = () => {
           return setIsError(false);
         })();
   };
-
-  const editHandler = (id) => {
-    const editVal = expenseItems.find((val) => val.id === id);
-    setExpense(editVal.expense);
-    setAmountVal(editVal.amountVal);
-    setIsEditing(true);
-    setEditingIndex(id);
-  };
-
-  const clearExpens = (idx) => {
-    const updatedItems = expenseItems.filter((value) => value.id !== idx);
-    setExpenseItems(updatedItems);
-  };
-
   useEffect(() => {
     localStorage.setItem("budget", JSON.stringify(budgetVal));
   }, [budgetVal]);
@@ -243,32 +230,14 @@ const Budget = () => {
             <h3>Expense Value </h3>
           </li>
         </ul>
-        <ul>
-          {expenseItems.map((value) => {
-            return (
-              <li key={value.id} className="flex mb-2">
-                <span className=" basis-[45%] text-[#B62F31] font-[700] flex">
-                  {value.expense}
-                </span>
-                <span className=" basis-[45%] text-[#B62F31] font-[700] flex">
-                  {value.amountVal}
-                </span>
-                <button
-                  className="icon before:content-['\f044'] common-icon text-[#476B3F]"
-                  onClick={() => editHandler(value.id)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="icon before:content-['\f1f8'] common-icon text-[#B62F31]"
-                  onClick={() => clearExpens(value.id)}
-                >
-                  Delete
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+        <ExpenseList
+          expenseItems={expenseItems}
+          setExpenseItems={setExpenseItems}
+          setIsEditing={setIsEditing}
+          setEditingIndex={setEditingIndex}
+          setExpense={setExpense}
+          setAmountVal={setAmountVal}
+        />
       </div>
     </>
   );
