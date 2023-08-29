@@ -189,7 +189,7 @@ const Budget = () => {
               onChange={(e) => setAmountVal(e.target.value)}
               className="common-input border-[#B62F31]"
             />
-            <span className="text-[#B62F31] font-[600] absolute bottom-[-43%]">
+            <span className="text-[#B62F31] font-[600] absolute bottom-[-43%] sm:text-[unset] text-[15px]">
               {isError && amountError.length != 0 ? amountError : null}
             </span>
           </div>
