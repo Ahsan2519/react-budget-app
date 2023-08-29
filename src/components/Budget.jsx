@@ -19,6 +19,7 @@ const Budget = () => {
     [amountList, setAmountList] = useState(initialAmount),
     [expenseError, setExpensErrro] = useState(""),
     [amountError, setAmoutErrro] = useState(""),
+    [addExpenseBudget, setAddExpenseBudgett] = useState(0),
     expenseValid = /^[A-Za-z\s\-.,!()]+$/;
 
   const SubmitHandler = (e) => {
@@ -42,9 +43,22 @@ const Budget = () => {
           return setIsError(false);
         })();
   };
-  console.log(amountVal <= 0, amountVal);
+
+  const calculateTotalAmount = () => {
+    let totalAmount = 0;
+    amountList.forEach((item) => {
+      totalAmount += parseInt(item.amountVal);
+    });
+    return totalAmount;
+  };
+
+  useEffect(() => {
+    const TotalExpenseAmount = calculateTotalAmount();
+    setAddExpenseBudgett(TotalExpenseAmount);
+  }, [amountList]);
 
   const expenseEvent = () => {
+    setExpensErrro("");
     !expense.trim()
       ? (() => {
           setExpensErrro("*Please add your expense.");
@@ -60,12 +74,13 @@ const Budget = () => {
           setAmoutErrro("*Expense amount can not be empty.");
           return setIsError(true);
         })()
-      : amountVal <= 0
+      : parseInt(amountVal) <= 0
       ? (() => {
           setAmoutErrro("*The expense amount must be greater than zero.");
           return setIsError(true);
         })()
-      : budgetVal.length === 0
+      : budgetVal.length === 0 ||
+        addExpenseBudget + parseInt(amountVal) > parseInt(budgetVal[0])
       ? (() => {
           setAmoutErrro("*You don't have enough budget.");
           return setIsError(true);
@@ -162,6 +177,7 @@ const Budget = () => {
               type="number"
               name="budget"
               id="Amount"
+              value={amountVal}
               onChange={(e) => setAmountVal(e.target.value)}
               className="common-input border-[#B62F31]"
             />
@@ -190,13 +206,13 @@ const Budget = () => {
           <li>
             <h2 className="common-text">Expenses</h2>
             <span className="common-text text-[#B62F31] before:content-['\f09d'] common-before icon">
-              $3000
+              ${addExpenseBudget}
             </span>
           </li>
           <li>
             <h2 className="common-text">Balance</h2>
             <span className="common-text text-[#476B3F] before:content-['\24'] common-before icon">
-              $3000
+              ${budgetVal - addExpenseBudget}
             </span>
           </li>
         </ul>
