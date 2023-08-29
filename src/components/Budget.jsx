@@ -11,15 +11,16 @@ const Budget = () => {
     [isError, setIsError] = useState(false),
     [expense, setExpense] = useState(""),
     [amountVal, setAmountVal] = useState(""),
-    storeExpense = localStorage.getItem("expense"),
-    initialExpense = storeExpense ? JSON.parse(storeExpense) : [],
-    [expenseItems, setExpenseItems] = useState(initialExpense),
-    storeExpenseAmount = localStorage.getItem("expenseAmount"),
-    initialAmount = storeExpenseAmount ? JSON.parse(storeExpenseAmount) : [],
-    [amountList, setAmountList] = useState(initialAmount),
+    storeExpenseItems = localStorage.getItem("expenseItems"),
+    initialExpenseItems = storeExpenseItems
+      ? JSON.parse(storeExpenseItems)
+      : [],
+    [expenseItems, setExpenseItems] = useState(initialExpenseItems),
     [expenseError, setExpensErrro] = useState(""),
     [amountError, setAmoutErrro] = useState(""),
     [addExpenseBudget, setAddExpenseBudgett] = useState(0),
+    [isEditing, setIsEditing] = useState(false),
+    [editingIndex, setEditingIndex] = useState(null),
     expenseValid = /^[A-Za-z\s\-.,!()]+$/;
 
   const SubmitHandler = (e) => {
@@ -46,7 +47,7 @@ const Budget = () => {
 
   const calculateTotalAmount = () => {
     let totalAmount = 0;
-    amountList.forEach((item) => {
+    expenseItems.forEach((item) => {
       totalAmount += parseInt(item.amountVal);
     });
     return totalAmount;
@@ -55,7 +56,7 @@ const Budget = () => {
   useEffect(() => {
     const TotalExpenseAmount = calculateTotalAmount();
     setAddExpenseBudgett(TotalExpenseAmount);
-  }, [amountList]);
+  }, [expenseItems]);
 
   const expenseEvent = () => {
     setExpensErrro("");
@@ -86,18 +87,40 @@ const Budget = () => {
           return setIsError(true);
         })()
       : (() => {
-          setExpenseItems([
-            ...expenseItems,
-            { id: expenseItems.length + 1, expense: expense },
-          ]);
-          setAmountList([
-            ...amountList,
-            { id: amountList.length + 1, amountVal: amountVal },
-          ]);
+          if (isEditing && editingIndex) {
+            const updatedItems = expenseItems.map((item) =>
+              item.id === editingIndex ? { ...item, expense, amountVal } : item
+            );
+            setExpenseItems(updatedItems);
+            setIsEditing(false);
+            setEditingIndex(null);
+          } else {
+            setExpenseItems([
+              ...expenseItems,
+              {
+                id: expenseItems.length + 1,
+                amountVal,
+                expense,
+              },
+            ]);
+          }
           setExpense("");
           setAmountVal("");
           return setIsError(false);
         })();
+  };
+
+  const editHandler = (id) => {
+    const editVal = expenseItems.find((val) => val.id === id);
+    setExpense(editVal.expense);
+    setAmountVal(editVal.amountVal);
+    setIsEditing(true);
+    setEditingIndex(id);
+  };
+
+  const clearExpens = (idx) => {
+    const updatedItems = expenseItems.filter((value) => value.id !== idx);
+    setExpenseItems(updatedItems);
   };
 
   useEffect(() => {
@@ -105,12 +128,8 @@ const Budget = () => {
   }, [budgetVal]);
 
   useEffect(() => {
-    localStorage.setItem("expense", JSON.stringify(expenseItems));
+    localStorage.setItem("expenseItems", JSON.stringify(expenseItems));
   }, [expenseItems]);
-
-  useEffect(() => {
-    localStorage.setItem("expenseAmount", JSON.stringify(amountList));
-  }, [amountList]);
 
   return (
     <>
@@ -217,26 +236,38 @@ const Budget = () => {
           </li>
         </ul>
         <ul className="flex">
-          <li className="basis-[40%] font-[600] mb-4">
+          <li className="basis-[35%] sm:basis-[40%] font-[600] mb-4">
             <h3>Expense Title</h3>
           </li>
-          <li className="basis-[40%] font-[600] mb-4">
+          <li className="basis-[35%] sm:basis-[40%] font-[600] mb-4">
             <h3>Expense Value </h3>
           </li>
         </ul>
-        <ul className="flex justify-between">
-          <li className="basis-[40%]">
-            <span className="text-[#B62F31] font-[700]">Coffee</span>
-          </li>
-          <li className="basis-[40%]">
-            <span className="text-[#B62F31] font-[700]">$200</span>
-          </li>
-          <li className="basis-[5%] icon indent-[-9999px] before:indent-[0] before:content-['\f044'] cursor-pointer">
-            <button>Edit</button>
-          </li>
-          <li className="basis-[5%] icon indent-[-9999px] before:indent-0 before:content-['\f1f8'] cursor-pointer">
-            <button>Delete</button>
-          </li>
+        <ul>
+          {expenseItems.map((value) => {
+            return (
+              <li key={value.id} className="flex mb-2">
+                <span className=" basis-[45%] text-[#B62F31] font-[700] flex">
+                  {value.expense}
+                </span>
+                <span className=" basis-[45%] text-[#B62F31] font-[700] flex">
+                  {value.amountVal}
+                </span>
+                <button
+                  className="icon before:content-['\f044'] common-icon text-[#476B3F]"
+                  onClick={() => editHandler(value.id)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="icon before:content-['\f1f8'] common-icon text-[#B62F31]"
+                  onClick={() => clearExpens(value.id)}
+                >
+                  Delete
+                </button>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </>

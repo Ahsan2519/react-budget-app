@@ -16,7 +16,11 @@
 }
 
 .icon{
-    @apply before:absolute relative before:font-['FontAwesome'] 
+    @apply before:absolute relative before:font-['FontAwesome'] cursor-pointer before:block
+}
+
+.common-icon {
+    @apply indent-[-9999px] before:indent-[0] sm:basis-[5%] basis-[7%]
 }
 
 @tailwind components;
