@@ -49,7 +49,9 @@ const Budget = () => {
   const calculateTotalAmount = () => {
     let totalAmount = 0;
     expenseItems.forEach((item) => {
-      totalAmount += parseInt(item.amountVal);
+      if (!isEditing || (isEditing && item.id !== editingIndex)) {
+        totalAmount += parseInt(item.amountVal);
+      }
     });
     return totalAmount;
   };
@@ -57,7 +59,7 @@ const Budget = () => {
   useEffect(() => {
     const TotalExpenseAmount = calculateTotalAmount();
     setAddExpenseBudgett(TotalExpenseAmount);
-  }, [expenseItems]);
+  }, [expenseItems, isEditing, editingIndex]);
 
   const expenseEvent = () => {
     setExpensErrro("");
