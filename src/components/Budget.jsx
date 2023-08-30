@@ -6,7 +6,7 @@ import ExpenseList from "./ExpenseList";
 const Budget = () => {
   const [budgetAmount, setBudgetAmount] = useState(""),
     storeBudget = localStorage.getItem("budget"),
-    initialBudget = storeBudget ? JSON.parse(storeBudget) : [],
+    initialBudget = storeBudget ? JSON.parse(storeBudget) : "",
     [budgetVal, setBudgetVal] = useState(initialBudget),
     [errortext, setErrorText] = useState(""),
     [isError, setIsError] = useState(false),
@@ -28,19 +28,36 @@ const Budget = () => {
     e.preventDefault();
   };
 
+  const addError = (msg) => {
+    setErrorText(msg);
+    return setIsError(true);
+  };
+
+  const addExpenseError = (msg) => {
+    setExpensErrro(msg);
+    return setIsError(true);
+  };
+  const addAmountError = (msg) => {
+    setAmoutErrro(msg);
+    return setIsError(true);
+  };
+
   const calculateEvent = () => {
     !budgetAmount
       ? (() => {
-          setErrorText("*The budget cannot be empty.");
-          return setIsError(true);
+          addError("*The budget cannot be empty.");
         })()
       : budgetAmount <= 0
       ? (() => {
-          setErrorText("*The budget must be greater than zero.");
-          return setIsError(true);
+          addError("*The budget must be greater than zero.");
+        })()
+      : budgetVal
+      ? (() => {
+          let updatedBudget = parseInt(budgetVal) + parseInt(budgetAmount);
+          setBudgetVal(updatedBudget);
         })()
       : (() => {
-          setBudgetVal([budgetAmount]);
+          setBudgetVal(budgetAmount);
           setBudgetAmount("");
           return setIsError(false);
         })();
@@ -65,29 +82,24 @@ const Budget = () => {
     setExpensErrro("");
     !expense.trim()
       ? (() => {
-          setExpensErrro("*Please add your expense.");
-          return setIsError(true);
+          addExpenseError("*Please add your expense.");
         })()
       : !expenseValid.test(expense)
       ? (() => {
-          setExpensErrro("*Please enter a valid expense.");
-          return setIsError(true);
+          addExpenseError("*Please enter a valid expense.");
         })()
       : !amountVal.trim()
       ? (() => {
-          setAmoutErrro("*Expense amount can not be empty.");
-          return setIsError(true);
+          addAmountError("*Expense amount can not be empty.");
         })()
       : parseInt(amountVal) <= 0
       ? (() => {
-          setAmoutErrro("*The expense amount must be greater than zero.");
-          return setIsError(true);
+          addAmountError("*The expense amount must be greater than zero.");
         })()
-      : budgetVal.length === 0 ||
-        addExpenseBudget + parseInt(amountVal) > parseInt(budgetVal[0])
+      : !budgetVal ||
+        addExpenseBudget + parseInt(amountVal) > parseInt(budgetVal)
       ? (() => {
-          setAmoutErrro("*You don't have enough budget.");
-          return setIsError(true);
+          addAmountError("*You don't have enough budget.");
         })()
       : (() => {
           if (isEditing && editingIndex) {
