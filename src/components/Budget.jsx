@@ -44,13 +44,9 @@ const Budget = () => {
 
   const calculateEvent = () => {
     !budgetAmount
-      ? (() => {
-          addError("*The budget cannot be empty.");
-        })()
+      ? addError("*The budget cannot be empty.")
       : budgetAmount <= 0
-      ? (() => {
-          addError("*The budget must be greater than zero.");
-        })()
+      ? addError("*The budget must be greater than zero.")
       : budgetVal
       ? (() => {
           let updatedBudget = parseInt(budgetVal) + parseInt(budgetAmount);
@@ -81,26 +77,16 @@ const Budget = () => {
   const expenseEvent = () => {
     setExpensErrro("");
     !expense.trim()
-      ? (() => {
-          addExpenseError("*Please add your expense.");
-        })()
+      ? addExpenseError("*Please add your expense.")
       : !expenseValid.test(expense)
-      ? (() => {
-          addExpenseError("*Please enter a valid expense.");
-        })()
+      ? addExpenseError("*Please enter a valid expense.")
       : !amountVal.trim()
-      ? (() => {
-          addAmountError("*Expense amount can not be empty.");
-        })()
+      ? addAmountError("*Expense amount can not be empty.")
       : parseInt(amountVal) <= 0
-      ? (() => {
-          addAmountError("*The expense amount must be greater than zero.");
-        })()
+      ? addAmountError("*The expense amount must be greater than zero.")
       : !budgetVal ||
         addExpenseBudget + parseInt(amountVal) > parseInt(budgetVal)
-      ? (() => {
-          addAmountError("*You don't have enough budget.");
-        })()
+      ? addAmountError("*You don't have enough budget.")
       : (() => {
           if (isEditing && editingIndex) {
             const updatedItems = expenseItems.map((item) =>
